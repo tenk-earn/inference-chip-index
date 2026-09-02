@@ -21,3 +21,20 @@ Local Workers preview:
 ```bash
 bun run preview:cloudflare
 ```
+
+
+## Node 22
+
+Wrangler 4 wants Node.js ≥ 22. On this box, Node 22.23.2 is unpacked at `/tmp/node22` (not on the default PATH). After a human `wrangler login`:
+
+```bash
+export PATH=/tmp/node22/bin:$PATH
+node -v   # v22.23.2
+bun run deploy:cloudflare
+```
+
+Do not run `wrangler login` from an unattended agent. Do not invent a `workers.dev` URL.
+
+Non-secret payment defaults can live in `wrangler.jsonc` `vars`. CDP API keys are `wrangler secret put` only.
+
+Bazaar listing steps: [bazaar.md](bazaar.md).

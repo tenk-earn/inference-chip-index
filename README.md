@@ -26,7 +26,7 @@ curl -sS http://localhost:3000/api/agent/entrypoints/get-dataset-status/invoke \
   -H 'content-type: application/json' --data '{"input":{}}'
 ```
 
-Paid entrypoints (`rank-inference-chips` $0.02, `compare-inference-chips` $0.03) **fail closed** without payment configuration. They never become free. Configure Base Sepolia x402 with `PAYMENTS_RECEIVABLE_ADDRESS`, `FACILITATOR_URL` or `PAYMENTS_FACILITATOR_URL`, and `PAYMENTS_NETWORK=eip155:84532`. See [docs/payments.md](docs/payments.md).
+Paid entrypoints (`rank-inference-chips` $0.02, `compare-inference-chips` $0.03) **fail closed** without a facilitator URL. They never become free. Default network is Base **mainnet** `eip155:8453` with payTo `0x75Cdae07B4F2BddC09Fe2368f0a8ce34e10AE072`. Set `FACILITATOR_URL=https://api.cdp.coinbase.com/platform/v2/x402`. Sepolia is `PAYMENTS_NETWORK=eip155:84532` only. Bazaar: [docs/bazaar.md](docs/bazaar.md). Payments: [docs/payments.md](docs/payments.md).
 
 ## Dataset
 
@@ -50,7 +50,7 @@ bun run deploy:cloudflare
 # equivalent: npx @opennextjs/cloudflare build && npx wrangler deploy
 ```
 
-If Wrangler is not logged in, or the Worker exceeds the free plan size, skip deploy. `bun run build` must still pass. Details: [docs/deploy.md](docs/deploy.md).
+If Wrangler is not logged in, or the Worker exceeds the free plan size, skip deploy. `bun run build` must still pass. Wrangler wants Node ≥ 22; this box keeps Node 20 by default and Node 22 at `/tmp/node22`. Details: [docs/deploy.md](docs/deploy.md).
 
 ## Stack
 

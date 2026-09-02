@@ -1,24 +1,48 @@
 import { z } from "zod";
+import { SLICE_IDS } from "./slices";
 
 export const emptyInput = z.object({});
 
 export const previewInput = z.object({
-  sliceId: z.string().min(1).optional(),
+  sliceId: z
+    .string()
+    .min(1)
+    .optional()
+    .describe("Optional exact comparison slice ID. Defaults to llama3.1-8b Offline tokens/s."),
 });
 
 export const rankInput = z.object({
-  sliceId: z.string().min(1),
-  vendors: z.array(z.string().min(1)).max(16).optional(),
-  metricView: z.enum(["official", "derived"]).optional(),
+  sliceId: z
+    .enum(SLICE_IDS)
+    .describe("Exact comparison slice ID. Primary: v6.0|closed|llama3.1-8b|Offline|99|tokens_per_second"),
+  vendors: z
+    .array(z.string().min(1))
+    .max(16)
+    .optional()
+    .describe("Optional vendor filter, e.g. NVIDIA, Intel, AMD."),
+  metricView: z
+    .enum(["official", "derived"])
+    .optional()
+    .describe("official = submitted-system result; derived = per-accelerator when count is known."),
   grouping: z.enum(["all-systems", "best-per-accelerator"]).optional(),
-  page: z.number().int().min(1).optional(),
-  pageSize: z.number().int().min(1).max(50).optional(),
+  page: z.number().int().min(1).optional().describe("1-based page. Default 1."),
+  pageSize: z.number().int().min(1).max(50).optional().describe("Page size 1-50. Default 25."),
 });
 
 export const compareInput = z.object({
-  sliceId: z.string().min(1),
-  acceleratorSlugs: z.array(z.string().min(1)).min(2).max(8),
-  baselineSlug: z.string().min(1).optional(),
+  sliceId: z
+    .enum(SLICE_IDS)
+    .describe("Exact comparison slice ID. Primary: v6.0|closed|llama3.1-8b|Offline|99|tokens_per_second"),
+  acceleratorSlugs: z
+    .array(z.string().min(1))
+    .min(2)
+    .max(8)
+    .describe("2-8 accelerator slugs, e.g. nvidia-b300-sxm-270gb and nvidia-rtx-pro-6000-blackwell."),
+  baselineSlug: z
+    .string()
+    .min(1)
+    .optional()
+    .describe("Optional baseline slug for deltas. Defaults to the first slug."),
   metricView: z.enum(["official", "derived"]).optional(),
 });
 

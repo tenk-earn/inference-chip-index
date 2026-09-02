@@ -7,5 +7,10 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
+  },
+  "vars": {
+    "PAYMENTS_NETWORK": "eip155:8453",
+    "PAYMENTS_RECEIVABLE_ADDRESS": "0x75Cdae07B4F2BddC09Fe2368f0a8ce34e10AE072",
+    "FACILITATOR_URL": "https://api.cdp.coinbase.com/platform/v2/x402"
   }
 }

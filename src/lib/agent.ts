@@ -1,20 +1,20 @@
 import { createAgent } from "@lucid-agents/core";
 import { http } from "@lucid-agents/http";
-import { payments, paymentsFromEnv } from "@lucid-agents/payments";
+import { payments } from "@lucid-agents/payments";
 import { compareInput, emptyInput, previewInput, rankInput, compareOutput, previewOutput, rankOutput, statusOutput } from "./schemas";
 import { defaultSliceId, loadSnapshot } from "./dataset";
+import { paymentsConfig, resolvePaymentsNetwork } from "./payments";
 import { rankRows } from "./ranking";
 import { compareChips } from "./compare";
+import {
+  COMPARE_DESCRIPTION,
+  RANK_DESCRIPTION,
+  asOfferBazaar,
+  compareDiscoveryExtension,
+  rankDiscoveryExtension,
+} from "./bazaar";
 
 const snapshot = loadSnapshot();
-
-function paymentsConfig() {
-  const env = typeof process === "undefined" ? ({} as Record<string, string | undefined>) : process.env;
-  const payTo = env.PAYMENTS_RECEIVABLE_ADDRESS;
-  const facilitator = env.FACILITATOR_URL ?? env.PAYMENTS_FACILITATOR_URL;
-  if (!payTo || !facilitator) return false;
-  return paymentsFromEnv({ network: "eip155:84532" }, env) ?? false;
-}
 
 function statusPayload() {
   return {
@@ -29,7 +29,15 @@ export const agentRuntime = await createAgent({
   description:
     "Verified MLPerf Inference v6.0 Closed-division comparisons of inference accelerators for autonomous research agents. Rankings are workload-specific and never claim a universal fastest chip.",
 })
-  .use(payments({ config: paymentsConfig() }))
+  .use(
+    payments({
+      config: paymentsConfig(),
+      // Lucid auto-bazaar (enabled:true) derives examples from Zod via exampleFromJsonSchema
+      // which emits ""/0/[] and then fails enum/min schema validation. Attach official
+      // declareDiscoveryExtension payloads on the exact offers instead. Method is POST.
+      reconciliation: { bazaar: { enabled: false } },
+    }),
+  )
   .use(http({ basePath: "/api/agent" }))
   .addEntrypoint({
     key: "get-dataset-status",
@@ -90,11 +98,21 @@ export const agentRuntime = await createAgent({
   })
   .addEntrypoint({
     key: "rank-inference-chips",
-    description: "Paid exact-slice ranking of official submitted-system MLPerf results.",
+    description: RANK_DESCRIPTION,
     input: rankInput,
     output: rankOutput,
     price: "0.02",
     paymentProtocol: "x402",
+    x402: {
+      offers: [
+        {
+          scheme: "exact",
+          network: resolvePaymentsNetwork(),
+          price: "0.02",
+          extensions: [asOfferBazaar(rankDiscoveryExtension())],
+        },
+      ],
+    },
     async handler({ input }) {
       const ranked = rankRows(snapshot, {
         sliceId: input.sliceId,
@@ -112,11 +130,21 @@ export const agentRuntime = await createAgent({
   })
   .addEntrypoint({
     key: "compare-inference-chips",
-    description: "Paid exact-slice comparison of 2–8 accelerator slugs with optional baseline deltas.",
+    description: COMPARE_DESCRIPTION,
     input: compareInput,
     output: compareOutput,
     price: "0.03",
     paymentProtocol: "x402",
+    x402: {
+      offers: [
+        {
+          scheme: "exact",
+          network: resolvePaymentsNetwork(),
+          price: "0.03",
+          extensions: [asOfferBazaar(compareDiscoveryExtension())],
+        },
+      ],
+    },
     async handler({ input }) {
       const compared = compareChips(snapshot, input);
       if ("error" in compared) {
