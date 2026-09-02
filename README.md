@@ -56,3 +56,7 @@ If Wrangler is not logged in, or the Worker exceeds the free plan size, skip dep
 
 - Next.js 15 App Router, TypeScript
 - `@lucid-agents/core@5.0.0` `@lucid-agents/http@4.0.0` `@lucid-agents/payments@5.0.0`
+
+## CI
+
+Copy [docs/github-ci.yml](docs/github-ci.yml) to `.github/workflows/ci.yml` (the push token here lacks the `workflow` scope).
