@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0c0d0b;
+  --bg-elev: #141511;
+  --ink: #ece7db;
+  --muted: #a39b8c;
+  --line: #2a2b26;
+  --accent: #c4a574;
+  --danger: #d46a6a;
+  --ok: #8fbf8a;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1, h2, h3, .serif {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+}
+
+a { color: inherit; }
+::selection { background: #c4a57455; }
+
+table { border-collapse: collapse; width: 100%; }
+th, td { border-bottom: 1px solid var(--line); padding: 0.55rem 0.65rem; text-align: left; }
+th { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+tbody tr:hover { background: #1b1c17; }
+
+.num { font-variant-numeric: tabular-nums; font-family: var(--font-mono), ui-monospace, monospace; }
