@@ -57,9 +57,8 @@ const rankRowExample = {
 
 /**
  * Accurate Bazaar metadata for Lucid POST invoke.
- * Lucid (@lucid-agents/payments 5.0.0) emits extensions.bazaar when
- * `reconciliation.bazaar.enabled` is true, derived from entrypoint Zod schemas.
- * These helpers are the intended schemas/examples (primary rank + compare).
+ * Attached on x402.offers (not Lucid auto-bazaar): Lucid exampleFromJsonSchema
+ * emits ""/0/[] which fail enum/min validation. Primary rank + compare.
  */
 export const RANK_DESCRIPTION =
   "Rank verified MLPerf Inference v6.0 Closed-division inference accelerators for one exact slice. Never a universal fastest chip. $0.02 USDC on Base mainnet.";
@@ -68,6 +67,7 @@ export const COMPARE_DESCRIPTION =
   "Compare 2-8 accelerator slugs on one exact MLPerf Inference v6.0 Closed slice, with optional baseline deltas. $0.03 USDC on Base mainnet.";
 
 export function rankDiscoveryExtension() {
+  // @x402/extensions types omit `method` (DistributiveOmit) but the runtime requires it.
   return declareDiscoveryExtension({
     method: "POST",
     bodyType: "json",
@@ -129,7 +129,7 @@ export function rankDiscoveryExtension() {
         },
       },
     },
-  });
+  } as Parameters<typeof declareDiscoveryExtension>[0]);
 }
 
 export function compareDiscoveryExtension() {
@@ -222,5 +222,6 @@ export function compareDiscoveryExtension() {
         },
       },
     },
-  });
+  } as Parameters<typeof declareDiscoveryExtension>[0]);
+
 }

@@ -61,13 +61,13 @@ POST /api/agent/entrypoints/:key/stream`}</pre>
       <section className="space-y-3">
         <h2 className="serif text-2xl">x402 flow</h2>
         <ol className="list-decimal space-y-2 pl-5 text-[var(--muted)]">
-          <li>Discover the Agent Card and priced skills (rank $0.02, compare $0.03) on Base Sepolia (eip155:84532).</li>
+          <li>Discover the Agent Card and priced skills (rank $0.02, compare $0.03) on Base mainnet (eip155:8453).</li>
           <li>When payment is configured, invoke a paid entrypoint without X-Payment and receive HTTP 402 with x402 offers.</li>
           <li>When payment configuration is absent, paid entrypoints fail closed (HTTP 503 payment_configuration_error) and never become free.</li>
-          <li>Settle on Base Sepolia, retry invoke with the payment header, receive the ranked JSON.</li>
+          <li>Settle on Base mainnet, retry invoke with the payment header, receive the ranked JSON.</li>
         </ol>
         <StateBanner tone="warn" title="Payment required">
-          Paid routes advertise x402 offers on Base Sepolia only after PAYMENTS_RECEIVABLE_ADDRESS and facilitator URL are set. They do not silently degrade to free.
+          Paid routes advertise x402 offers on Base mainnet (eip155:8453) after FACILITATOR_URL is set. payTo defaults to the TenK Base worker. They do not silently degrade to free. Sepolia is an explicit PAYMENTS_NETWORK override only.
         </StateBanner>
         <StateBanner tone="ok" title="Paid success">
           A successful paid invoke returns Lucid JSON {"{ run_id, status: \"succeeded\", output }"} with the slice, ranks, and source URLs.

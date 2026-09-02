@@ -47,7 +47,24 @@ curl -sS -X POST https://api.cdp.coinbase.com/platform/v2/x402/validate   -H "Co
   }'
 ```
 
-Success looks like `valid: true` and `simulation.outcome: "accepted"`. Inspect `bazaarExtension`. Save the JSON under `/workspace/tenk/evidence/`. There is **no public URL yet** (no Cloudflare login on this box), so this curl cannot be run against a live seller.
+Success looks like `valid: true` and `simulation.outcome: "accepted"`. Inspect `bazaarExtension`. Save the JSON under `/workspace/tenk/evidence/`.
+
+## Public URL (temporary Cloudflare, 60 minutes)
+
+`wrangler deploy --temporary` (no login, $0) published a 402-only preview of **rank-inference-chips**:
+
+- Live: `https://inference-chip-index-rank.saber-ferry-07c.workers.dev/api/agent/entrypoints/rank-inference-chips/invoke`
+- Health: `https://inference-chip-index-rank.saber-ferry-07c.workers.dev/health`
+- Claim (makes the temp account permanent, 60 min window from 2026-09-02 17:56 ICT): `https://dash.cloudflare.com/claim-preview?claimToken=XPJkeV4JCVcueptaLuDMNh7u6oKRBrRLRBVF2YO5b6o`
+
+From this box the route returns HTTP 402, `eip155:8453`, payTo TenK, `PAYMENT-REQUIRED` header, and `extensions.bazaar` with the primary llama3.1-8b Offline tokens/s example.
+
+CDP `POST /validate` from Coinbase's crawler currently gets **Cloudflare 403** (`returns_402` fail: "auth middleware may be running before x402 middleware"). Our curl sees 402. That is WAF/bot-fight on the unclaimed `workers.dev` preview, not a missing bazaar block. Re-validate after claiming the account or deploying on a logged-in free Cloudflare account.
+
+This preview **does not fulfill** a paid rank (402 only). Do not pay it. Do not self-pay. The durable product is the Lucid Next.js app via `bun run deploy:cloudflare` after login.
+
+Evidence: `/workspace/tenk/evidence/cdp-bazaar-validate-rank-POST-2026-09-02T1058Z.json` (`valid: false` because of the 403).
+
 
 Local unpaid check (after `FACILITATOR_URL` is set):
 
@@ -71,12 +88,12 @@ CDP verify/settle uses JWT from `CDP_API_KEY_ID` / `CDP_API_KEY_SECRET`. Lucid's
 - Do not invent a public URL.
 - Do not run `wrangler login` without the human on the box.
 
-## Next human step (blocked on login)
+## Next human step
 
-1. Cloudflare **free** account login on this box (`PATH=/tmp/node22/bin:$PATH wrangler login`) **or** a Hugging Face Space if Cloudflare is refused.
-2. Create a **new** CDP API key (ID + secret as env/secrets only). Do not paste into the repo.
-3. `PATH=/tmp/node22/bin:$PATH bun run deploy:cloudflare` (Node 22 is installed at `/tmp/node22`).
-4. POST validate against the public HTTPS URL; save JSON under `/workspace/tenk/evidence/`.
-5. Wait for a stranger buyer to settle. Do not self-pay.
+1. **Claim the temp Worker within 60 minutes** (link above) **or** Cloudflare **free** account login on this box (`PATH=/tmp/node22/bin:$PATH wrangler login`). Hugging Face Space is the fallback if Cloudflare is refused.
+2. After a durable `workers.dev` (claimed or logged-in), turn off bot-fight if CDP validate still 403s, then re-run the validate curl.
+3. Create a **new** CDP API key (ID + secret as Cloudflare secrets only). Do not paste into the repo.
+4. `PATH=/tmp/node22/bin:$PATH bun run deploy:cloudflare` for the full Lucid app (this fulfills rank/compare).
+5. Wait for a stranger buyer to settle. Do not self-pay. Do not top up CDP past 1000 free txs/month.
 
-Node 22: `/tmp/node22/bin/node` reports `v22.23.2`. Box default remains Node 20.19.2. Wrangler was not logged in; no public URL was created.
+Node 22: `/tmp/node22/bin/node` reports `v22.23.2`. Box default remains Node 20.19.2. Wrangler 4.128.0 runs under that PATH. `wrangler whoami`: not authenticated (temporary preview only).

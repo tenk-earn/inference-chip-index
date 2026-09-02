@@ -1,0 +1,8 @@
+{
+  "description": "Rank verified MLPerf Inference v6.0 Closed-division inference accelerators for one exact slice. Never a universal fastest chip. $0.02 USDC on Base mainnet.",
+  "payTo": "0x75Cdae07B4F2BddC09Fe2368f0a8ce34e10AE072",
+  "network": "eip155:8453",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "amount": "20000",
+  "price": "$0.02"
+}

@@ -30,10 +30,11 @@ Paid `rank-inference-chips` returns a payment-configuration error without env (f
 
 ## Deploy
 
-Skipped. `wrangler` on this box requires Node.js ≥ 22 (box is v20.19.2) and no Cloudflare account/token is configured. Exact command when a free Cloudflare login exists:
+Node 22.23.2 is unpacked at `/tmp/node22` (box default remains 20.19.2). Wrangler was not logged in; no public URL. After a human Cloudflare free login:
 
 ```bash
-npx @opennextjs/cloudflare build && npx wrangler deploy
+export PATH=/tmp/node22/bin:$PATH
+bun run deploy:cloudflare
 ```
 
-Do not use a paid plan or Kennath’s card.
+Do not use a paid plan or Kennath’s card. Bazaar steps: docs/bazaar.md.

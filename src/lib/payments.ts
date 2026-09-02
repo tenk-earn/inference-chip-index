@@ -18,11 +18,11 @@ function envRecord(env?: PaymentsEnv): PaymentsEnv {
 }
 
 /** Default Base mainnet. Sepolia only when PAYMENTS_NETWORK/NETWORK is an explicit override. */
-export function resolvePaymentsNetwork(env?: PaymentsEnv): typeof BASE_MAINNET | typeof BASE_SEPOLIA | string {
+export function resolvePaymentsNetwork(env?: PaymentsEnv): `${string}:${string}` {
   const raw = (envRecord(env).PAYMENTS_NETWORK ?? envRecord(env).NETWORK ?? BASE_MAINNET).trim();
   if (raw === "base" || raw === BASE_MAINNET) return BASE_MAINNET;
   if (raw === "base-sepolia" || raw === BASE_SEPOLIA) return BASE_SEPOLIA;
-  return raw;
+  return raw as `${string}:${string}`;
 }
 
 /**
